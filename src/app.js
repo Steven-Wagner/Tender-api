@@ -11,23 +11,22 @@ const morganSetting = (NODE_ENV === 'production')
     ? 'tiny'
     : 'dev';
 
-    app.use(morgan(morganSetting));
-    app.use(cors());
-    app.use(helmet());
+app.use(morgan(morganSetting));
+app.use(cors());
+app.use(helmet());
 
-    app.get('/', (req, res) => {
-        res.send('Hello, world')
-    })
+app.get('/api/*', (req, res) => {
+    res.json({ok: true})
+})
 
-    app.use(function errorHandler(error, req, res, next) {
-        let response;
-        if (NODE_ENV === 'production') {
-            repsonse = {error: {message: 'server error'}}
-        }
-        else {
-            response = {error}
-        }
-        res.status(500).json(reponse)
-    })
+app.use(function errorHandler(error, req, res, next) {
+    if (NODE_ENV === 'production') {
+        repsonse = {error: {message: 'server error'}}
+    }
+    else {
+        response = {error}
+    }
+    res.status(500).json(reponse)
+})
 
-    module.exports = app;
+module.exports = app;
