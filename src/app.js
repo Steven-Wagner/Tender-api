@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const {NODE_ENV} = require('./config');
+const authRouter = require('./auth-router/auth-router');
+const signupRouter = require('./signup/signup-router');
 
 const app = express();
 
@@ -15,9 +17,13 @@ app.use(morgan(morganSetting));
 app.use(cors());
 app.use(helmet());
 
-app.get('/api/*', (req, res) => {
-    res.json({ok: true})
-})
+app.use('/api/auth/', authRouter);
+
+app.use('/api/signup/', signupRouter);
+
+// app.get('/api/*', /(req, res) => {
+//     res.json({ok: true})
+// })
 
 app.use(function errorHandler(error, req, res, next) {
     if (NODE_ENV === 'production') {
