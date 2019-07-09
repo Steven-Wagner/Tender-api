@@ -1,4 +1,4 @@
-const AuthService = require('../auth/auth-service')
+const AuthService = require('../auth-router/auth-service')
 
 function requireAuth(req, res, next) {
     const authToken = req.get('Authorization') || ''
@@ -13,13 +13,16 @@ function requireAuth(req, res, next) {
     }
 
     try {
+        console.log('bearer token', bearerToken)
         const payload = AuthService.verifyJwt(bearerToken)
+        console.log('payload.sub',payload.sub)
         
         AuthService.getUserWithUserName(
             req.app.get('db'),
             payload.sub
         )
         .then(user => {
+            console.log('user in require auth', user)
             if (!user) 
                 return res.status(401).json({ message: 'Unauthorized request' })
             

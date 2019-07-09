@@ -4,8 +4,9 @@ const config = require('../config')
 
 const AuthService = {
   getUserWithUserName(db, username) {
+    console.log('uername', username)
     return db('users')
-      .where({ username })
+      .where( {username} )
       .first()
   },
   createJwt(subject, payload) {
