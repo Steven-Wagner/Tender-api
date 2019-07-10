@@ -279,7 +279,7 @@ describe('Your Products Endpoints', function() {
                 .send(testProduct)
                 .expect(400)
                 .then(res => {
-                    console.log('response', res.body)
+                    expect(res.body.message).to.eql(`Title is already taken`);
                 })
             })
             
