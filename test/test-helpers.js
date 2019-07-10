@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const oneDay = 61 * 60 * 24 * 1000;
+
+const now = new Date();
+
 function makeUsersArray() {
     return [
         {
@@ -22,7 +26,7 @@ function makeUsersArray() {
         username: 'Tester 3',
         description: 'A third test description',
         password: 'password3',
-        money: 150
+        money: 150,
         },
     ]
 }
@@ -34,22 +38,34 @@ function makeProductsArray() {
             title: 'The Hair Squeege',
             img: 'https://i.kinja-img.com/gawker-media/image/upload/s--tZIa_IA1--/c_fill,f_auto,fl_progressive,g_center,h_675,pg_1,q_80,w_1200/1810e79awrtl9jpg.jpg',
             description: 'Squeege your hair the way you were always meant to.',
-            price: '2',
+            price: '2.0000',
             sold: 2,
-            profit: 4,
+            profit: '4.0000',
             ad: 'None',
-            creator_id: 1
+            creator_id: 1,
         },
         {
             id: 2,
             title: 'Slip Resistant Socks',
             img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
             description: 'You never have to wear shoes to work ever again!',
-            price: '3',
+            price: '3.0000',
             sold: 4,
-            profit: 12,
+            profit: '12.0000',
             ad: 'Homepage ads',
-            creator_id: 1
+            creator_id: 1,
+        },
+        {
+            id: 3,
+            title: 'Old Product',
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'A product from a long time ago',
+            price: '3.0000',
+            sold: 4,
+            profit: '12.0000',
+            ad: 'Homepage ads',
+            creator_id: 1,
+            date_created: new Date(now-oneDay)
         }
     ]
 }
