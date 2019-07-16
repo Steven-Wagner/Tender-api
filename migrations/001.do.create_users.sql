@@ -3,6 +3,6 @@ CREATE TABLE users (
     username text not null unique,
     password text not null,
     description text,
-    money INTEGER,
+    money NUMERIC(15,4),
     date_created TIMESTAMP DEFAULT now() NOT NULL
 );

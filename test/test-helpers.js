@@ -31,6 +31,23 @@ function makeUsersArray() {
     ]
 }
 
+function makePurchasedProductsArray() {
+    return [{
+        product_id: 1,
+        buyer_id: 2
+    }]
+}
+
+function makeNewProduct() {
+    return {
+        title: 'New Product Title',
+        description: 'A new product',
+        img: 'https://www.google.com/imgres?imgurl=https%3A%2F%2Fimgix.bustle.com%2Fuploads%2Fimage%2F2018%2F7%2F27%2F91ecdcac-446e-45f6-be76-958336ea3069-38-weird-products-reformat020.jpeg&imgrefurl=https%3A%2F%2Fwww.bustle.com%2Fp%2F37-weird-products-on-amazon-that-are-so-cheap-theyre-essentially-free-9911253&docid=Twf8GULvwwIz8M&tbnid=e8Mpea5IE_7uDM%3A&vet=10ahUKEwi7vs6Y6bLjAhVyds0KHVXNCj0QMwjaASgBMAE..i&w=1600&h=1200&bih=568&biw=1242&q=weird%20product&ved=0ahUKEwi7vs6Y6bLjAhVyds0KHVXNCj0QMwjaASgBMAE&iact=mrc&uact=8'
+        ,price: '2.0000',
+        ad: 'None'
+    }
+}
+
 function makeProductsArray() {
     return [
         {
@@ -66,6 +83,17 @@ function makeProductsArray() {
             ad: 'Homepage ads',
             creator_id: 1,
             date_created: new Date(now-oneDay)
+        },
+        {
+            id: 4,
+            title: 'Expensive Product',
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'A product that should be too expesive to purchase',
+            price: '30000.0000',
+            sold: 4,
+            profit: '12.0000',
+            ad: 'Homepage ads',
+            creator_id: 1
         }
     ]
 }
@@ -74,7 +102,8 @@ function cleanTables(db) {
     return db.raw(
     `TRUNCATE
         users,
-        products
+        products,
+        purchased_products
         RESTART IDENTITY CASCADE`)
 }
 
@@ -88,10 +117,22 @@ function seedUsers(db, users) {
         .insert(preppedUsers)
 }
 
+function seedPurchasedProducts(db, purchasedProducts) {
+    console.log('purchased pordicyts seeding', purchasedProducts)
+    return db
+        .into('purchased_products')
+        .insert(purchasedProducts)
+}
+
 function seedProducts(db, products) {
+    preparedProducts = products.map(product => {
+        const newProduct = Object.assign({}, product);
+        delete newProduct.id;
+        return newProduct
+    })
     return db
         .into('products')
-        .insert(products)
+        .insert(preparedProducts)
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
@@ -102,11 +143,26 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
     return `Bearer ${token}`
 }
 
+function randomString(len) {
+    var text = "";
+
+    var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i = 0; i < len; i++)
+        text += charset.charAt(Math.floor(Math.random() * charset.length));
+
+    return text;
+}
+
 module.exports = {
     makeUsersArray,
     makeProductsArray,
+    makeNewProduct,
+    makePurchasedProductsArray,
     cleanTables,
     seedUsers,
     seedProducts,
-    makeAuthHeader
+    seedPurchasedProducts,
+    makeAuthHeader,
+    randomString
 }

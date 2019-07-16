@@ -1,6 +1,6 @@
 const knex = require('knex')
-const app = require('../src/app')
-const helpers = require('./test-helpers')
+const app = require('../../src/app')
+const helpers = require('../test-helpers')
 const jwt = require('jsonwebtoken')
 
 describe('Your Products Endpoints', function() {
@@ -49,7 +49,7 @@ describe('Your Products Endpoints', function() {
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .expect(200)
                 .then(res => {
-                    expect(res.body).to.have.length(3);
+                    expect(res.body).to.have.length(testProducts.length);
                     expect(res.body[0].title).to.eql('The Hair Squeege');
                     expect(res.body[0]).to.contain.keys('title', 'description', 'price', 'img', 'sold', 'profit', 'ad', 'id', 'creator_id', 'date_created');
                 })
@@ -279,7 +279,7 @@ describe('Your Products Endpoints', function() {
                 .send(testProduct)
                 .expect(400)
                 .then(res => {
-                    expect(res.body.message).to.eql(`Title is already taken`);
+                    expect(res.body.message).to.eql(`${testProduct.title} is already taken`);
                 })
             })
             
