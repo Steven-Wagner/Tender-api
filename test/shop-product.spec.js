@@ -55,7 +55,7 @@ describe('Buy Product Endpoint', function() {
             .set('Authorization', helpers.makeAuthHeader(testUser))
             .expect(200)
             .then(res => {
-                expect(res.body.shoppingProducts).to.have.length(4);
+                expect(res.body.shoppingProducts).to.have.length(testProducts.length);
             })
         })
         it('Responds 200 and shopping list does not contain products created by the requesting user', () => {
@@ -77,7 +77,7 @@ describe('Buy Product Endpoint', function() {
             .set('Authorization', helpers.makeAuthHeader(testUsers[1]))
             .expect(200)
             .then(res => {
-                expect(res.body.shoppingProducts).to.have.length(3);
+                expect(res.body.shoppingProducts).to.have.length(testProducts.length-1);
             })
         })
     })

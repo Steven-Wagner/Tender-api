@@ -58,7 +58,7 @@ function makeProductsArray() {
             price: '2.0000',
             sold: 2,
             profit: '4.0000',
-            ad: 'None',
+            ad: 'Popup ads',
             creator_id: 1,
         },
         {
@@ -92,9 +92,9 @@ function makeProductsArray() {
             price: '30000.0000',
             sold: 4,
             profit: '12.0000',
-            ad: 'Homepage ads',
+            ad: 'Annoying ads',
             creator_id: 1
-        }
+        },
     ]
 }
 
