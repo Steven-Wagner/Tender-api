@@ -28,7 +28,61 @@ describe('Buy Product Endpoint', function() {
 
     afterEach('cleanup', async function () {return await helpers.cleanTables(db)});
 
-    describe('POST /api/buyproduct/:user_id', () => {
+    describe('GET /api/shopProducts/purchase/:user_id', () => {
+        beforeEach('insert users', async function () {
+            return await helpers.seedUsers(
+                db,
+                testUsers
+            );
+        });
+        beforeEach('insert products', async function () {
+            return await helpers.seedProducts(
+                db,
+                testProducts
+            );
+        })
+        beforeEach('insert purchasedProducts', async function () {
+            return await helpers.seedPurchasedProducts(
+                db,
+                testPurchasedProducts
+            );
+        })
+        it('Responds 200 and recives shopping list', () => {
+            const userId = testUser.id;
+            
+            return request(app)
+            .get(`/api/shopProducts/${userId}`)
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .expect(200)
+            .then(res => {
+                expect(res.body.shoppingProducts).to.have.length(4);
+            })
+        })
+        it('Responds 200 and shopping list does not contain products created by the requesting user', () => {
+            const userId = testUsers[0].id;
+            
+            return request(app)
+            .get(`/api/shopProducts/${userId}`)
+            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .expect(200)
+            .then(res => {
+                expect(res.body.shoppingProducts).to.have.length(0);
+            })
+        })
+        it('Responds 200 and shopping list does not contain products already purchased', () => {
+            const userId = testUsers[1].id;
+            
+            return request(app)
+            .get(`/api/shopProducts/${userId}`)
+            .set('Authorization', helpers.makeAuthHeader(testUsers[1]))
+            .expect(200)
+            .then(res => {
+                expect(res.body.shoppingProducts).to.have.length(3);
+            })
+        })
+    })
+
+    describe('POST /api/shopProducts/purchase/:user_id', () => {
         beforeEach('insert users', async function () {
             return await helpers.seedUsers(
                 db,
@@ -53,7 +107,7 @@ describe('Buy Product Endpoint', function() {
                 const productId = testProducts.length+1;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userId}`)
+                .post(`/api/shopProducts/purchase/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .send({product_id: productId})
                 .expect(400)
@@ -66,7 +120,7 @@ describe('Buy Product Endpoint', function() {
                 const productId = testProducts[3].id;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userId}`)
+                .post(`/api/shopProducts/purchase/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .send({product_id: productId})
                 .expect(400)
@@ -79,7 +133,7 @@ describe('Buy Product Endpoint', function() {
                 const productId = testPurchasedProducts[0].product_id;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userId}`)
+                .post(`/api/shopProducts/purchase/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[userId-1]))
                 .send({product_id: productId})
                 .expect(400)
@@ -94,7 +148,7 @@ describe('Buy Product Endpoint', function() {
                 const productId = testProducts[0].id;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userId}`)
+                .post(`/api/shopProducts/purchase/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .send({product_id: productId})
                 .expect(200)
@@ -108,7 +162,7 @@ describe('Buy Product Endpoint', function() {
                 const userMoney = testUser.money;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userId}`)
+                .post(`/api/shopProducts/purchase/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .send({product_id: productId})
                 .expect(200)
@@ -129,7 +183,7 @@ describe('Buy Product Endpoint', function() {
                 const creatorMoney = testUsers[creator_id-1].money;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userId}`)
+                .post(`/api/shopProducts/purchase/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .send({product_id: productId})
                 .expect(200)
@@ -150,7 +204,7 @@ describe('Buy Product Endpoint', function() {
                 const expectedBonus = testProducts[0].price*.01;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userBuysProductId}`)
+                .post(`/api/shopProducts/purchase/${userBuysProductId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[2]))
                 .send({product_id: productId})
                 .then(res => {
@@ -169,7 +223,7 @@ describe('Buy Product Endpoint', function() {
                 const productId = testProducts[0].id;
                 
                 return request(app)
-                .post(`/api/buyproduct/${userBuysProductId}`)
+                .post(`/api/shopProducts/purchase/${userBuysProductId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUsers[2]))
                 .send({product_id: productId})
                 .then(res => {

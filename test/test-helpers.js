@@ -12,21 +12,21 @@ function makeUsersArray() {
         username: 'Tester',
         description: 'A test description',
         password: 'password',
-        money: 150
+        money: '150.0000'
         },
         {
         id: 2,
         username: 'Tester 2',
         description: 'A second test description',
         password: 'password1',
-        money: 150
+        money: '150.0000'
         },
         {
         id: 3,
         username: 'Tester 3',
         description: 'A third test description',
         password: 'password3',
-        money: 150,
+        money: '150.0000'
         },
     ]
 }
@@ -118,7 +118,6 @@ function seedUsers(db, users) {
 }
 
 function seedPurchasedProducts(db, purchasedProducts) {
-    console.log('purchased pordicyts seeding', purchasedProducts)
     return db
         .into('purchased_products')
         .insert(purchasedProducts)

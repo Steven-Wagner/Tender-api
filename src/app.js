@@ -7,7 +7,8 @@ const {NODE_ENV} = require('./config');
 const authRouter = require('./auth-router/auth-router');
 const signupRouter = require('./signup/signup-router');
 const yourProductsRouter =  require('./your-products/your-products-router');
-const buyProductRouter = require('./buy-product/buy-product');
+const shopProductsRouter = require('./shop-product/shop-product');
+const userInfoRouter = require('./user-info/user-info');
 
 const app = express();
 
@@ -25,7 +26,9 @@ app.use('/api/signup/', signupRouter);
 
 app.use('/api/yourproducts/', yourProductsRouter);
 
-app.use('/api/buyproduct/', buyProductRouter);
+app.use('/api/shopProducts/', shopProductsRouter);
+
+app.use('/api/userInfo/', userInfoRouter);
 
 app.use(function errorHandler(error, req, res, next) {
     if (NODE_ENV === 'production') {
