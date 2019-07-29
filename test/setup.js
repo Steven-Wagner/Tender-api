@@ -7,4 +7,3 @@ const request = require('supertest');
 
 global.expect = expect;
 global.request = request;
-// global.adCosts =  {'Homepage ads': 200, 'Popup ads': 15, 'Annoying ads': 20};
