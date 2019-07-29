@@ -1,3 +1,5 @@
+const {adCosts} =  require('../config');
+
 const adService = {
     getAds(user_id, adType, db) {
         return db
@@ -29,10 +31,10 @@ const adService = {
         const oneDay = 60 * 60 * 24 * 1000;
         const aDayAgo = new Date (currentDate - oneDay);
 
-        const adCosts = [{catagory:'Homepage ads', cost: 10}, {catagory: 'Popup ads', cost: 15}, {catagory: 'Annoying ads', cost: 20}]
+        const adCatagories = [{catagory:'Homepage ads', cost: adCosts['Homepage ads']}, {catagory: 'Popup ads', cost: adCosts['Popup ads']}, {catagory: 'Annoying ads', cost: adCosts['Annoying ads']}]
 
-        for (let i=0; i<adCosts.length; i++) {
-            await this.payAds(adCosts[i], aDayAgo, db)
+        for (let i=0; i<adCatagories.length; i++) {
+            await this.payAds(adCatagories[i], aDayAgo, db)
         }
         return;
     },

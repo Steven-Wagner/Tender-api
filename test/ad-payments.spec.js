@@ -2,6 +2,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const adService = require('../src/ads/adService');
+const {adCosts} =  require('../src/config');
 
 describe('ad payments', function() {
     let db
@@ -48,6 +49,8 @@ describe('ad payments', function() {
             );
         })
         it('Payment for ads over 24 hours since last payment are made', () => {
+            testProduct = testProducts[2];
+            testUserMoney = testUser.money;
             return adService.checkAdPayments(db)
             .then(() => {
                 return db
@@ -56,7 +59,7 @@ describe('ad payments', function() {
                 .select('money')
                 .first()
                 .then(userMoney => {
-                    expect(userMoney.money).to.eql('140.0000')
+                    expect(parseFloat(userMoney.money)).to.eql(parseFloat(testUserMoney)-parseFloat(adCosts[testProduct.ad]))
                 })
             })
         })

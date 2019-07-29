@@ -1,7 +1,7 @@
 const knex = require('knex')
 const app = require('../../src/app')
 const helpers = require('../test-helpers')
-const jwt = require('jsonwebtoken')
+const {adCosts} =  require('../../src/config');
 
 describe('New Product Endpoint', function() {
     let db
@@ -11,8 +11,6 @@ describe('New Product Endpoint', function() {
     const newProduct = helpers.makeNewProduct();
 
     const testProducts = helpers.makeProductsArray();
-
-    const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20};
 
     before('make knex instance', () => {
         db = knex({

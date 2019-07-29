@@ -11,11 +11,7 @@ const db = knex({
 app.set('db', db)
 
 const payAdsInterval = setInterval(function () {
-    console.log('payadsinterval started')
     adService.checkAdPayments(db)
-    .then(test => {
-        console.log('test', test);
-    })
 }, 3600000)
 
 app.listen(PORT, () => {

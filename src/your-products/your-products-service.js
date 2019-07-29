@@ -1,3 +1,5 @@
+const {adCosts} =  require('../config');
+
 const yourProductsService = {
     getProducts(db, user_id) {
         return db
@@ -47,7 +49,6 @@ const yourProductsService = {
             product.id
         )
         .then(async function(oldProduct) {
-            const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20};
             const requiredFieldsNotValidated = yourProductsService.validateRequiredFields(product, res);
             if (requiredFieldsNotValidated) {
                 return requiredFieldsNotValidated;
@@ -161,7 +162,6 @@ const yourProductsService = {
     },
 
     updateProduct(db, product) {
-        const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20}
         return this.getProductById(db, product.id)
         .then(oldProduct => {
             if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
@@ -199,7 +199,6 @@ const yourProductsService = {
         return productId;
     },
     async payForAdd(db, newProduct) {
-        const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20}
         return await db
             .from('users')
             .where('id', newProduct.creator_id)
@@ -246,7 +245,6 @@ const yourProductsService = {
         }
     },
     validateAdSpending(db, newProduct, res) {
-        const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20}
         return db
             .from('users')
             .where('id', newProduct.creator_id)
