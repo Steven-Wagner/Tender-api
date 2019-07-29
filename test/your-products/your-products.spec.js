@@ -334,6 +334,22 @@ describe('Your Products Endpoints', function() {
                     expect(res.body.message).to.eql(`${testProduct.title} is already taken`);
                 })
             })
+            it('responds 400 when user tries to change to title that already exists with differnt casing', () => {
+                const testUser = testUsers[0];
+                const testProduct = Object.assign({}, testProducts[0]);
+                testProduct.title = testProducts[1].title.toUpperCase();
+
+                const userId = testUser.id;
+                        
+                return request(app)
+                .patch(`/api/yourproducts/${userId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUser))
+                .send(testProduct)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message).to.eql(`${testProduct.title} is already taken`);
+                })
+            })
             
             context('User tries to edit after 24 hours', () => {
                 const editBefore24Hours = ['title', 'img', 'description'];

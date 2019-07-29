@@ -38,6 +38,14 @@ function makeUsersArray() {
     ]
 }
 
+function makeNewUser() {
+    return {
+        username: 'New Test User',
+        description: 'A new description',
+        password: 'test password'
+    }
+}
+
 function makePurchasedProductsArray() {
     return [{
         product_id: 1,
@@ -155,10 +163,14 @@ function cleanTables(db) {
 }
 
 function seedUsers(db, users) {
-    const preppedUsers = users.map(user => ({
-        ...user,
-        password: bcrypt.hashSync(user.password, 1)
-    }))
+    const preppedUsers = users.map(user => {
+        const userInfo = Object.assign({}, user);
+        delete userInfo.id;
+    return {
+        ...userInfo,
+        password: bcrypt.hashSync(userInfo.password, 1)
+    }
+    })
     return db
         .into('users')
         .insert(preppedUsers)
@@ -202,6 +214,7 @@ function randomString(len) {
 
 module.exports = {
     makeUsersArray,
+    makeNewUser,
     makeProductsArray,
     makeNewProduct,
     makePurchasedProductsArray,
