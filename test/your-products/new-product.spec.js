@@ -12,6 +12,8 @@ describe('New Product Endpoint', function() {
 
     const testProducts = helpers.makeProductsArray();
 
+    const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20};
+
     before('make knex instance', () => {
         db = knex({
             client: 'pg',
@@ -135,6 +137,20 @@ describe('New Product Endpoint', function() {
                     })
                 })
             })
+            it('responds 400 when user can not afford ad', () => {
+                const testUser = testUsers[3];
+                const userId = testUser.id;
+                const product = Object.assign({}, newProduct);
+                product.ad = 'Annoying ads'
+                return request(app)
+                .post(`/api/yourproducts/${userId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUser))
+                .send(product)
+                .expect(400)
+                .then(res => {
+                    expect(res.body.message).to.eql('You can not afford the ad payment');
+                })
+            })
         })
         describe('happy path', () => {
             it('responds 200 and new product id', () => {
@@ -148,6 +164,27 @@ describe('New Product Endpoint', function() {
                 .expect(200)
                 .then(res => {
                     expect(res.body.id).to.eql(testProducts.length+1);
+                })
+            })
+            it('responds 200 and ad is payed for', () => {
+                const userId = testUser.id;
+                const product = Object.assign({}, newProduct);
+                product.ad = 'Homepage ads';
+                
+                return request(app)
+                .post(`/api/yourproducts/${userId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUser))
+                .send(product)
+                .expect(200)
+                .then(res => {
+                    return db
+                        .from('users')
+                        .where('id', userId)
+                        .select('money')
+                        .first()
+                        .then(money => {
+                            expect(parseFloat(money.money)).to.eql(parseFloat(testUser.money)-parseFloat(adCosts[product.ad]))
+                        })
                 })
             })
         })

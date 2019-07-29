@@ -66,7 +66,9 @@ describe('Buy Product Endpoint', function() {
             .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
             .expect(200)
             .then(res => {
-                expect(res.body.shoppingProducts).to.have.length(0);
+                res.body.shoppingProducts.forEach(product => {
+                    expect(product.creator_id).to.not.equal(userId);
+                })
             })
         })
         it('Responds 200 and shopping list does not contain products already purchased', () => {

@@ -1,0 +1,2 @@
+ALTER TABLE products
+ADD COLUMN last_ad_payment TIMESTAMP DEFAULT now() NOT NULL;

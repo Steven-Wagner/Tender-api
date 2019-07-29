@@ -1,7 +1,6 @@
 const knex = require('knex')
 const app = require('../../src/app')
 const helpers = require('../test-helpers')
-const jwt = require('jsonwebtoken')
 
 describe('Your Products Endpoints', function() {
     let db
@@ -10,6 +9,8 @@ describe('Your Products Endpoints', function() {
     const testUser = testUsers[0];
 
     const testProducts = helpers.makeProductsArray();
+
+    const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20};
 
     before('make knex instance', () => {
         db = knex({
@@ -43,13 +44,21 @@ describe('Your Products Endpoints', function() {
         context('happy path', () => {
             it('responds 200 and returns all of the current user\'s products correctly', () => {
                 const userId = testUser.id;
+                const numberOfUsersProducts = testProducts.reduce(function(count, product) {
+                    if (product.creator_id == userId) {
+                        return count+1;
+                    }
+                    else {
+                        return count;
+                    }
+                }, 0)
                 
                 return request(app)
                 .get(`/api/yourproducts/${userId}`)
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .expect(200)
                 .then(res => {
-                    expect(res.body).to.have.length(testProducts.length);
+                    expect(res.body).to.have.length(numberOfUsersProducts);
                     expect(res.body[0].title).to.eql('The Hair Squeege');
                     expect(res.body[0]).to.contain.keys('title', 'description', 'price', 'img', 'sold', 'profit', 'ad', 'id', 'creator_id', 'date_created');
                 })
@@ -164,7 +173,7 @@ describe('Your Products Endpoints', function() {
                     })
                 })
             })
-            context('ad test', () => {
+            context('change ads', () => {
                 context('all ad choices are succesful', () => {
                     const adChoices = ['Homepage ads', 'None', 'Popup ads', 'Annoying ads']
                     adChoices.forEach(ad => {
@@ -191,9 +200,9 @@ describe('Your Products Endpoints', function() {
                         })
                     })
                 })
-                it('responds 400 when incorrect ad choice is submitted', () => {
-                    testProduct = Object.assign({}, testProducts[0]);
-                    testProduct.ad = 'wrong choice';
+                it('responds 200 and user pays for more expensive ad', () => {
+                    const testProduct = Object.assign({}, testProducts[0]);
+                    testProduct.ad = 'Annoying ads';
 
                     const userId = testUser.id;
                             
@@ -201,16 +210,60 @@ describe('Your Products Endpoints', function() {
                     .patch(`/api/yourproducts/${userId}`)
                     .set('Authorization', helpers.makeAuthHeader(testUser))
                     .send(testProduct)
-                    .expect(400)
+                    .expect(200)
+                    .then(res => {
+                        return db
+                            .from('users')
+                            .where('id', userId)
+                            .select('money')
+                            .first()
+                            .then(userMoney => {
+                                expect(parseFloat(userMoney.money)).to.eql(parseFloat(testUser.money)-parseFloat(adCosts[testProduct.ad]))
+                            })
+                    })
+                })
+                it('responds 200 and user pays for more expensive ad and last_ad_payment is updated', () => {
+                    const testProduct = Object.assign({}, testProducts[0]);
+                    testProduct.ad = 'Annoying ads';
+
+                    const userId = testUser.id;
+                            
+                    return request(app)
+                    .patch(`/api/yourproducts/${userId}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUser))
+                    .send(testProduct)
+                    .expect(200)
                     .then(res => {
                         return db
                             .from('products')
                             .where('id', testProduct.id)
+                            .select('last_ad_payment')
                             .first()
-                        .then(updatedProduct => {
-                            expect(updatedProduct.ad).to.eql(testProducts[0].ad);
-                            expect(res.body.message).to.eql(`Ads can only be 'None', 'Homepage ads', 'Popup ads', 'Annoying ads'`);
-                        })
+                            .then(payment => {
+                                expect(payment.last_ad_payment).to.not.eql(testProduct.last_ad_payment);
+                            })
+                    })
+                })
+                it('responds 200 and user does not pay for ad if it is less expansive than previous ad', () => {
+                    const testProduct = Object.assign({}, testProducts[0]);
+                    testProduct.ad = 'Homepage ads';
+
+                    const userId = testUser.id;
+                            
+                    return request(app)
+                    .patch(`/api/yourproducts/${userId}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUser))
+                    .send(testProduct)
+                    .expect(200)
+                    .then(res => {
+                        return db
+                            .from('users')
+                            .where('id', userId)
+                            .select('money')
+                            .first()
+                            .then(userMoney => {
+                                expect(parseFloat(userMoney.money)).to.eql(parseFloat(testUser.money))
+                            })
                     })
                 })
             })

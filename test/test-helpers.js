@@ -28,6 +28,13 @@ function makeUsersArray() {
         password: 'password3',
         money: '150.0000'
         },
+        {
+        id: 4,
+        username: 'Tester 4',
+        description: 'A fourth test description',
+        password: 'password4',
+        money: '10.0000'
+        },
     ]
 }
 
@@ -82,7 +89,8 @@ function makeProductsArray() {
             profit: '12.0000',
             ad: 'Homepage ads',
             creator_id: 1,
-            date_created: new Date(now-oneDay)
+            date_created: new Date(now-oneDay),
+            last_ad_payment: new Date(now-oneDay)
         },
         {
             id: 4,
@@ -94,6 +102,45 @@ function makeProductsArray() {
             profit: '12.0000',
             ad: 'Annoying ads',
             creator_id: 1
+        },
+        {
+            id: 5,
+            title: `Can't afford ad payment Product`,
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'A product that should be too expesive to purchase',
+            price: '10.0000',
+            sold: 4,
+            profit: '40.0000',
+            ad: 'Annoying ads',
+            creator_id: 4,
+            date_created: new Date(now-oneDay),
+            last_ad_payment: new Date(now-oneDay)
+        },
+        {
+            id: 6,
+            title: `Can just barely afford item`,
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'A product that user can just pay ad for',
+            price: '10.0000',
+            sold: 4,
+            profit: '40.0000',
+            ad: 'Homepage ads',
+            creator_id: 4,
+            date_created: new Date(now-oneDay),
+            last_ad_payment: new Date(now-oneDay)
+        },
+        {
+            id: 7,
+            title: `User can't pay ad payment bc they already payed other ads`,
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'A product that should be too expesive to pay for the ad',
+            price: '10.0000',
+            sold: 4,
+            profit: '40.0000',
+            ad: 'Annoying ads',
+            creator_id: 4,
+            date_created: new Date(now-oneDay),
+            last_ad_payment: new Date(now-oneDay)
         },
     ]
 }

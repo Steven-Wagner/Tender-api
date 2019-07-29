@@ -47,6 +47,7 @@ const yourProductsService = {
             product.id
         )
         .then(async function(oldProduct) {
+            const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20};
             const requiredFieldsNotValidated = yourProductsService.validateRequiredFields(product, res);
             if (requiredFieldsNotValidated) {
                 return requiredFieldsNotValidated;
@@ -80,6 +81,13 @@ const yourProductsService = {
             const priceNotValidated = yourProductsService.validatePrice(product, res)
             if (priceNotValidated) {
                 return priceNotValidated;
+            }
+
+            if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
+                const cantAffordAd = yourProductsService.validateAdSpending(db, product, res)
+                if (cantAffordAd) {
+                    return cantAffordAd;
+                }
             }
         })
     },
@@ -153,20 +161,27 @@ const yourProductsService = {
     },
 
     updateProduct(db, product) {
-        return db
-            .from('products')
-            .where('id', product.id)
-            .update({
-                title: product.title,
-                img: product.img,
-                description: product.description,
-                price: product.price,
-                ad: product.ad
-            })
+        const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20}
+        return this.getProductById(db, product.id)
+        .then(oldProduct => {
+            if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
+                yourProductsService.payForAdd(db, product);
+            }
+            return db
+                .from('products')
+                .where('id', product.id)
+                .update({
+                    title: product.title,
+                    img: product.img,
+                    description: product.description,
+                    price: product.price,
+                    ad: product.ad
+                })
+        })
     },
 
-    postNewProduct(db, newProduct) {
-        return db
+    async postNewProduct(db, newProduct) {
+        const productId = await db
             .into('products')
             .insert({
                 creator_id: newProduct.creator_id,
@@ -177,6 +192,28 @@ const yourProductsService = {
                 ad: newProduct.ad
             })
             .returning('id')
+        if (newProduct.ad !== 'None') {
+            newProduct.id = productId[0];
+            await this.payForAdd(db, newProduct);
+        }
+        return productId;
+    },
+    async payForAdd(db, newProduct) {
+        const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20}
+        return await db
+            .from('users')
+            .where('id', newProduct.creator_id)
+            .decrement({
+                money: adCosts[newProduct.ad]
+            })
+            .then(res => {
+                return db
+                    .from('products')
+                    .where('id', newProduct.id)
+                    .update({
+                        last_ad_payment: 'now()'
+                    })
+            })
     },
     async validateNewProduct(newProduct, res, db) {
         const requiredFieldsNotValidated = this.validateRequiredFields(newProduct, res);
@@ -203,6 +240,26 @@ const yourProductsService = {
         if (priceNotValidated) {
             return priceNotValidated;
         }
+        const cantAffordAd = this.validateAdSpending(db, newProduct, res)
+        if (cantAffordAd) {
+            return cantAffordAd;
+        }
+    },
+    validateAdSpending(db, newProduct, res) {
+        const adCosts = {'Homepage ads': 10, 'Popup ads': 15, 'Annoying ads': 20}
+        return db
+            .from('users')
+            .where('id', newProduct.creator_id)
+            .select('money')
+            .first()
+            .then(money => {
+                if (money.money <= adCosts[newProduct.ad]) {
+                    return res.status(400).json({
+                        message: `You can not afford the ad payment`
+                    })
+                }
+                else {return false}
+            })
     },
     validateDescription(newProduct, res) {
         if (newProduct.description.length > 1000) {
