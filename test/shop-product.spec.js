@@ -24,9 +24,56 @@ describe('Buy Product Endpoint', function() {
 
     after('disconnect from db', () => db.destroy());
 
-    before('cleanup', async function () { await helpers.cleanTables(db)});
+    before('cleanup', async function () { return await helpers.cleanTables(db)});
 
     afterEach('cleanup', async function () {return await helpers.cleanTables(db)});
+
+    describe('GET /api/shopProducts/popular/:user_id', () => {
+        beforeEach('insert users', async function () {
+            return await helpers.seedUsers(
+                db,
+                testUsers
+            );
+        });
+        it('responds 200 and returns 0 products when no products for sale', () => {
+            const userId = testUser.id;
+            
+            return request(app)
+            .get(`/api/shopProducts/popular/${userId}`)
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .expect(200)
+            .then(res => {
+                expect(res.body.length).to.eql(0);
+            })
+        })
+        context('products added', () => {
+            beforeEach('insert products', async function () {
+                return await helpers.seedProducts(
+                    db,
+                    testProducts
+                );
+            })
+            beforeEach('insert purchasedProducts', async function () {
+                return await helpers.seedPurchasedProducts(
+                    db,
+                    testPurchasedProducts
+                );
+            })
+            it('responds 200 and returns 3 most popular products', () => {
+                const userId = testUser.id;
+                
+                return request(app)
+                .get(`/api/shopProducts/popular/${userId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUser))
+                .expect(200)
+                .then(res => {
+                    expect(res.body[0].sold).to.eql(testProducts[1].sold);
+                    expect(res.body[0].title).to.eql(testProducts[1].title);
+                    expect(res.body.length).to.eql(3);
+                })
+            })
+        })
+    })
 
     describe('GET /api/shopProducts/purchase/:user_id', () => {
         beforeEach('insert users', async function () {
@@ -55,7 +102,7 @@ describe('Buy Product Endpoint', function() {
             .set('Authorization', helpers.makeAuthHeader(testUser))
             .expect(200)
             .then(res => {
-                expect(res.body.shoppingProducts).to.have.length(testProducts.length);
+                expect(res.body.shoppingProducts).to.have.length(testProducts.length-1);
             })
         })
         it('Responds 200 and shopping list does not contain products created by the requesting user', () => {

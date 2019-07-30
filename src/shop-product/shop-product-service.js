@@ -1,4 +1,12 @@
 const shopProductsService = {
+    getPopularProducts(db, user_id) {
+        return db
+            .from('products')
+            .whereNot('creator_id', user_id)
+            .orderBy('sold', 'desc')
+            .select('title', 'creator_id', 'description', 'price', 'profit', 'ad', 'date_created', 'id', 'img', 'sold')
+            .limit(3)
+    },
     getShoppingProducts(user_id, db) {
         return db
             // get products already purchased

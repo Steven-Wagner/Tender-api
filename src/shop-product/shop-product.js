@@ -46,4 +46,21 @@ shopProductsRouter
             next(error);
         })
     })
+
+shopProductsRouter
+    .route('/popular/:user_id')
+    .all(requireAuth)
+    .get((req, res, next) => {
+        shopProductsService.getPopularProducts(
+            req.app.get('db'),
+            req.params.user_id
+        )
+        .then(popularProducts => {
+            res.status(200).json(
+                popularProducts);
+        })
+        .catch(error => {
+            next(error);
+        })
+    })
     module.exports = shopProductsRouter;

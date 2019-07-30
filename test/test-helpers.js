@@ -47,10 +47,12 @@ function makeNewUser() {
 }
 
 function makePurchasedProductsArray() {
-    return [{
+    return [
+        {
         product_id: 1,
         buyer_id: 2
-    }]
+        },
+    ]
 }
 
 function makeNewProduct() {
@@ -82,7 +84,7 @@ function makeProductsArray() {
             img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
             description: 'You never have to wear shoes to work ever again!',
             price: '3.0000',
-            sold: 4,
+            sold: 6,
             profit: '12.0000',
             ad: 'Homepage ads',
             creator_id: 1,
@@ -149,6 +151,17 @@ function makeProductsArray() {
             creator_id: 4,
             date_created: new Date(now-oneDay),
             last_ad_payment: new Date(now-oneDay)
+        },
+        {
+            id: 8,
+            title: `Most sold product`,
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'This product has sold a lot',
+            price: '10.0000',
+            sold: 100,
+            profit: '400.0000',
+            ad: 'Annoying ads',
+            creator_id: 3
         },
     ]
 }

@@ -6,6 +6,23 @@ const yourProductsRouter = express.Router();
 const jsonBodyParser = express.json();
 
 yourProductsRouter
+    .route('/popular/:user_id')
+    .all(requireAuth)
+    .get((req, res, next) => {
+        yourProductsService.getUsersPopularProducts(
+            req.app.get('db'),
+            req.params.user_id
+        )
+        .then(usersPopularProducts => {
+            res.status(200).json(
+                usersPopularProducts);
+        })
+        .catch(error => {
+            next(error);
+        })
+    })
+
+yourProductsRouter
     .route('/:user_id')
     .all(requireAuth)
     .get((req, res, next) => {

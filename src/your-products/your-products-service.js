@@ -279,6 +279,14 @@ const yourProductsService = {
             }
         }
         return false
+    },
+    getUsersPopularProducts(db, user_id) {
+        return db
+            .from('products')
+            .where('creator_id', user_id)
+            .orderBy('sold', 'desc')
+            .select('title', 'creator_id', 'description', 'price', 'profit', 'ad', 'date_created', 'id', 'img', 'sold')
+            .limit(3)
     }
 
 }
