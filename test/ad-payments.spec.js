@@ -51,6 +51,15 @@ describe('ad payments', function() {
         it('Payment for ads over 24 hours since last payment are made', () => {
             testProduct = testProducts[2];
             testUserMoney = testUser.money;
+            const moneySpent = testProducts.reduce(function(total, product) {
+                if (product.creator_id === testUser.id && product.last_ad_payment) {
+                    return total + adCosts[product.ad];
+                }
+                else {
+                    return total;
+                }
+            }, 0);
+
             return adService.checkAdPayments(db)
             .then(() => {
                 return db
@@ -59,7 +68,7 @@ describe('ad payments', function() {
                 .select('money')
                 .first()
                 .then(userMoney => {
-                    expect(parseFloat(userMoney.money)).to.eql(parseFloat(testUserMoney)-parseFloat(adCosts[testProduct.ad]))
+                    expect(parseFloat(userMoney.money)).to.eql(parseFloat(testUserMoney)-parseFloat(moneySpent))
                 })
             })
         })
@@ -116,6 +125,38 @@ describe('ad payments', function() {
                     .then(adType => {
                         expect(adType.ad).to.eql('None')
                     })
+                })
+            })
+        })
+        it('Ad payment is subtracted from products profit', () => {
+            testProduct = testProducts[2];
+            testProductProfit = testProduct.profit - adCosts[testProduct.ad];
+
+            return adService.checkAdPayments(db)
+            .then(() => {
+                return db
+                .from('products')
+                .where('id', testProduct.id)
+                .select('profit')
+                .first()
+                .then(profit => {
+                    expect(parseFloat(profit.profit)).to.eql(parseFloat(testProductProfit))
+                })
+            })
+        })
+        it('Ad payment is subtracted from products profit even when profit will be negative', () => {
+            testProduct = testProducts[8];
+            testProductProfit = testProduct.profit - adCosts[testProduct.ad];
+
+            return adService.checkAdPayments(db)
+            .then(() => {
+                return db
+                .from('products')
+                .where('id', testProduct.id)
+                .select('*')
+                .first()
+                .then(profit => {
+                    expect(parseFloat(profit.profit)).to.eql(parseFloat(testProductProfit))
                 })
             })
         })

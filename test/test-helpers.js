@@ -163,6 +163,19 @@ function makeProductsArray() {
             ad: 'Annoying ads',
             creator_id: 3
         },
+        {
+            id: 9,
+            title: 'negitive profit Product',
+            img: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTFk_cXo-RkuPFKdls7vyFQIPxr-Su2UMjMmkroNEm7wmNmnM0BTqGZCy4ep0XNaKOBFWz_q5Cvmvm9tIQoSzx2HBwPpk6OzRP3U8VAfHhvXAnKhPunFwY3&usqp=CAc',
+            description: 'User will pay for product add and will have a negitive profit',
+            price: '3.00',
+            sold: 0,
+            profit: '2.00',
+            ad: 'Homepage ads',
+            creator_id: 1,
+            date_created: new Date(now-oneDay),
+            last_ad_payment: new Date(now-oneDay)
+        },
     ]
 }
 

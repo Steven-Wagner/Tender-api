@@ -59,19 +59,25 @@ const adService = {
                     return db
                         .into('users')
                         .where('id', creator_id)
-                        .update({
-                            money: (userMoney.money-adType.cost)
+                        //User pays for ad
+                        .decrement({
+                            money: (adType.cost)
                         })
                         .then(res => {
                             return db
                                 .from('products')
                                 .where('id', product.id)
+                                //update last payment to current time
                                 .update({
                                     last_ad_payment: 'now()'
                                 })
-                                // subtract cost of add from products profit total
+                                //subtract ad's cost from product's profit
+                                .decrement({
+                                    profit: adType.cost
+                                })
                         })
                 }
+                //If user can not afford ad, set product's ad to None
                 else {
                     return db
                         .from('products')
