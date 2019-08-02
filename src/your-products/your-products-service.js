@@ -1,4 +1,4 @@
-const {adCosts} =  require('../config');
+const adService =  require('../ads/adService');
 
 const yourProductsService = {
     getProducts(db, user_id) {
@@ -57,47 +57,50 @@ const yourProductsService = {
             product.id
         )
         .then(async function(oldProduct) {
-            const requiredFieldsNotValidated = yourProductsService.validateRequiredFields(product, res);
-            if (requiredFieldsNotValidated) {
-                return requiredFieldsNotValidated;
-            };
+            return adService.getSimpleAdCosts(db)
+            .then(async function(adCosts) {
+                const requiredFieldsNotValidated = yourProductsService.validateRequiredFields(product, res);
+                if (requiredFieldsNotValidated) {
+                    return requiredFieldsNotValidated;
+                };
 
-            const descriptionNotValidated = yourProductsService.validateDescription(product, res);
-            if (descriptionNotValidated) {
-                return descriptionNotValidated
-            }
-
-            const idNotValidated = yourProductsService.validateId(user_id, oldProduct, res)
-            if (idNotValidated) {
-                return idNotValidated;
-            }
-
-            const over24HourUpdatesNotValidated = yourProductsService.validateUpdatesOver24Hrs(oldProduct, product, res);
-            if (over24HourUpdatesNotValidated) {
-                return over24HourUpdatesNotValidated;
-            }
-
-            const titleNotValidated = await yourProductsService.validateTitle(db, product, res, oldProduct)
-            if (titleNotValidated) {
-                return titleNotValidated;
-            }
-            
-            const adsNotValidated = yourProductsService.validateAds(product, res)
-            if (adsNotValidated) {
-                return adsNotValidated;
-            }
-
-            const priceNotValidated = yourProductsService.validatePrice(product, res)
-            if (priceNotValidated) {
-                return priceNotValidated;
-            }
-
-            if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
-                const cantAffordAd = yourProductsService.validateAdSpending(db, product, res)
-                if (cantAffordAd) {
-                    return cantAffordAd;
+                const descriptionNotValidated = yourProductsService.validateDescription(product, res);
+                if (descriptionNotValidated) {
+                    return descriptionNotValidated
                 }
-            }
+
+                const idNotValidated = yourProductsService.validateId(user_id, oldProduct, res)
+                if (idNotValidated) {
+                    return idNotValidated;
+                }
+
+                const over24HourUpdatesNotValidated = yourProductsService.validateUpdatesOver24Hrs(oldProduct, product, res);
+                if (over24HourUpdatesNotValidated) {
+                    return over24HourUpdatesNotValidated;
+                }
+
+                const titleNotValidated = await yourProductsService.validateTitle(db, product, res, oldProduct)
+                if (titleNotValidated) {
+                    return titleNotValidated;
+                }
+                
+                const adsNotValidated = yourProductsService.validateAds(product, res)
+                if (adsNotValidated) {
+                    return adsNotValidated;
+                }
+
+                const priceNotValidated = yourProductsService.validatePrice(product, res)
+                if (priceNotValidated) {
+                    return priceNotValidated;
+                }
+
+                if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
+                    const cantAffordAd = yourProductsService.validateAdSpending(db, product, res, adCosts)
+                    if (cantAffordAd) {
+                        return cantAffordAd;
+                    }
+                }
+            })
         })
     },
     validateUpdatesOver24Hrs(oldProduct, product, res) {
@@ -172,19 +175,22 @@ const yourProductsService = {
     updateProduct(db, product) {
         return this.getProductById(db, product.id)
         .then(oldProduct => {
-            if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
-                yourProductsService.payForAdd(db, product);
-            }
-            return db
-                .from('products')
-                .where('id', product.id)
-                .update({
-                    title: product.title,
-                    img: product.img,
-                    description: product.description,
-                    price: product.price,
-                    ad: product.ad
-                })
+            return adService.getSimpleAdCosts(db)
+            .then(adCosts => {
+                if (adCosts[oldProduct.ad] < adCosts[product.ad]) {
+                    yourProductsService.payForAd(db, product, adCosts);
+                }
+                return db
+                    .from('products')
+                    .where('id', product.id)
+                    .update({
+                        title: product.title,
+                        img: product.img,
+                        description: product.description,
+                        price: product.price,
+                        ad: product.ad
+                    })
+            })        
         })
     },
 
@@ -201,12 +207,15 @@ const yourProductsService = {
             })
             .returning('id')
         if (newProduct.ad !== 'None') {
-            newProduct.id = productId[0];
-            await this.payForAdd(db, newProduct);
+            await adService.getSimpleAdCosts(db)
+            .then(async function(adCosts) {
+                newProduct.id = productId[0];
+                await yourProductsService.payForAd(db, newProduct, adCosts);
+            })
         }
         return productId;
     },
-    async payForAdd(db, newProduct) {
+    async payForAd(db, newProduct, adCosts) {
         return await db
             .from('users')
             .where('id', newProduct.creator_id)
@@ -223,43 +232,46 @@ const yourProductsService = {
             })
     },
     async validateNewProduct(newProduct, res, db) {
-        const requiredFieldsNotValidated = this.validateRequiredFields(newProduct, res);
-        if (requiredFieldsNotValidated) {
-            return requiredFieldsNotValidated;
-        };
+        return adService.getSimpleAdCosts(db)
+        .then(async function(adCosts) {
+            const requiredFieldsNotValidated = yourProductsService.validateRequiredFields(newProduct, res);
+            if (requiredFieldsNotValidated) {
+                return requiredFieldsNotValidated;
+            };
 
-        const descriptionNotValidated = this.validateDescription(newProduct, res);
-        if (descriptionNotValidated) {
-            return descriptionNotValidated
-        }
+            const descriptionNotValidated = yourProductsService.validateDescription(newProduct, res);
+            if (descriptionNotValidated) {
+                return descriptionNotValidated
+            }
 
-        const adchoicesNotValidated = this.validateAds(newProduct, res);
-        if (adchoicesNotValidated) {
-            return adchoicesNotValidated;
-        }
+            const adchoicesNotValidated = yourProductsService.validateAds(newProduct, res);
+            if (adchoicesNotValidated) {
+                return adchoicesNotValidated;
+            }
 
-        const titleNotValidated = await this.validateTitle(db, newProduct, res)
-        if (titleNotValidated) {
-            return titleNotValidated;
-        }
-        
-        const priceNotValidated = this.validatePrice(newProduct, res)
-        if (priceNotValidated) {
-            return priceNotValidated;
-        }
-        const cantAffordAd = this.validateAdSpending(db, newProduct, res)
-        if (cantAffordAd) {
-            return cantAffordAd;
-        }
+            const titleNotValidated = await yourProductsService.validateTitle(db, newProduct, res)
+            if (titleNotValidated) {
+                return titleNotValidated;
+            }
+            
+            const priceNotValidated = yourProductsService.validatePrice(newProduct, res)
+            if (priceNotValidated) {
+                return priceNotValidated;
+            }
+            const cantAffordAd = yourProductsService.validateAdSpending(db, newProduct, res, adCosts)
+            if (cantAffordAd) {
+                return cantAffordAd;
+            }
+        })
     },
-    validateAdSpending(db, newProduct, res) {
+    validateAdSpending(db, newProduct, res, adCosts) {
         return db
             .from('users')
             .where('id', newProduct.creator_id)
             .select('money')
             .first()
             .then(money => {
-                if (money.money <= adCosts[newProduct.ad]) {
+                if (parseFloat(money.money) <= parseFloat(adCosts[newProduct.ad])) {
                     return res.status(400).json({
                         message: `You can not afford the ad payment`
                     })

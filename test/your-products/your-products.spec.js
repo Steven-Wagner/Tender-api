@@ -1,10 +1,11 @@
 const knex = require('knex')
 const app = require('../../src/app')
 const helpers = require('../test-helpers')
-const {adCosts} =  require('../../src/config');
+const adService = require('../../src/ads/adService');
 
 describe('Your Products Endpoints', function() {
     let db
+    let adCosts
 
     const testUsers = helpers.makeUsersArray();
     const testUser = testUsers[0];
@@ -19,6 +20,8 @@ describe('Your Products Endpoints', function() {
         app.set('db', db)
         return db
     });
+
+    before('get adCosts', async function () {await adService.getSimpleAdCosts(db).then(adCatagories => adCosts=adCatagories)});
 
     after('disconnect from db', () => db.destroy());
 
@@ -192,9 +195,9 @@ describe('Your Products Endpoints', function() {
                                     .from('products')
                                     .where('id', testProduct.id)
                                     .first()
-                                .then(updatedProduct => {
-                                    expect(updatedProduct.ad).to.eql(testProduct.ad)
-                                })
+                                    .then(updatedProduct => {
+                                        expect(updatedProduct.ad).to.eql(testProduct.ad)
+                                    })
                             })
                         })
                     })

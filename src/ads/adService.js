@@ -1,4 +1,4 @@
-const {adCosts} =  require('../config');
+// const {adCosts} =  require('../config');
 
 const adService = {
     getAds(user_id, adType, db) {
@@ -25,17 +25,35 @@ const adService = {
             return false;
         }
     },
+    getAdCosts(db) {
+        return db
+            .from('ad_costs')
+            .select('ad', 'cost')
+    },
+    getSimpleAdCosts(db) {
+        return this.getAdCosts(db)
+        .then(adCatagories => {
+            const adCosts = {}
+            adCatagories.forEach(catagory => {
+                adCosts[catagory.ad] = catagory.cost
+            })
+            return adCosts
+        })
+    },
     async checkAdPayments(db) {
-        debugger
         const currentDate = new Date();
         const oneDay = 60 * 60 * 24 * 1000;
         const aDayAgo = new Date (currentDate - oneDay);
 
-        const adCatagories = [{catagory:'Homepage ads', cost: adCosts['Homepage ads']}, {catagory: 'Popup ads', cost: adCosts['Popup ads']}, {catagory: 'Annoying ads', cost: adCosts['Annoying ads']}]
+        await this.getAdCosts(db)
+        .then(async function(adCatagories) {
+            // [{ad:'Homepage ads', cost: adCosts['Homepage ads']}, {ad: 'Popup ads', cost: adCosts['Popup ads']}, {ad: 'Annoying ads', cost: adCosts['Annoying ads']}]
 
-        for (let i=0; i<adCatagories.length; i++) {
-            await this.payAds(adCatagories[i], aDayAgo, db)
-        }
+            for (let i=0; i<adCatagories.length; i++) {
+                await adService.payAds(adCatagories[i], aDayAgo, db)
+            }
+            return;
+        })
         return;
     },
     async payAds(adType, aDayAgo, db) {
@@ -49,10 +67,10 @@ const adService = {
     },
     async payForAd(product, adType, db) {
         const creator_id = product.creator_id
-        return await db
+        return db
             .from('users')
             .where('id', creator_id)
-            .select('money')
+            .select('*')
             .first()
             .then(userMoney => {
                 if (parseFloat(userMoney.money) >= parseFloat(adType.cost)) {
@@ -91,7 +109,7 @@ const adService = {
     getAdsToBeCharged(adType, aDayAgo, db) {
         return db
         .from('products')
-        .where('ad', adType.catagory)
+        .where('ad', adType.ad)
         .andWhere('last_ad_payment', '<=', aDayAgo)
         .select('*')
     }

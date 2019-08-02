@@ -1,10 +1,12 @@
 const knex = require('knex')
 const app = require('../../src/app')
 const helpers = require('../test-helpers')
-const {adCosts} =  require('../../src/config');
+// const {adCosts} =  require('../../src/config');
+const adService = require('../../src/ads/adService');
 
 describe('New Product Endpoint', function() {
     let db
+    let adCosts
 
     const testUsers = helpers.makeUsersArray();
     const testUser = testUsers[0];
@@ -22,6 +24,8 @@ describe('New Product Endpoint', function() {
     });
 
     after('disconnect from db', () => db.destroy());
+
+    before('get adCosts', async function () {await adService.getSimpleAdCosts(db).then(adCatagories => adCosts=adCatagories)});
 
     before('cleanup', async function () { await helpers.cleanTables(db)});
 

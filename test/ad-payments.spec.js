@@ -2,10 +2,10 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 const adService = require('../src/ads/adService');
-const {adCosts} =  require('../src/config');
 
 describe('ad payments', function() {
-    let db
+    let db;
+    let adCosts;
 
     const testUsers = helpers.makeUsersArray();
     const testUser = testUsers[0];
@@ -22,6 +22,8 @@ describe('ad payments', function() {
         app.set('db', db)
         return db
     });
+
+    before('get adCosts', async function () {await adService.getSimpleAdCosts(db).then(adCatagories => adCosts=adCatagories)});
 
     after('disconnect from db', () => db.destroy());
 
@@ -53,10 +55,10 @@ describe('ad payments', function() {
             testUserMoney = testUser.money;
             const moneySpent = testProducts.reduce(function(total, product) {
                 if (product.creator_id === testUser.id && product.last_ad_payment) {
-                    return total + adCosts[product.ad];
+                    return parseFloat(total) + parseFloat(adCosts[product.ad]);
                 }
                 else {
-                    return total;
+                    return parseFloat(total);
                 }
             }, 0);
 
