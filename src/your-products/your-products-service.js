@@ -37,6 +37,14 @@ const yourProductsService = {
         return (now - formattedProductDate) > oneDay;
     },
 
+    getUsersPurchasedProducts(db,  user_id) {
+        return db
+            .from('purchased_products')
+            .where('buyer_id', user_id)
+            .innerJoin('products', 'products.id', 'purchased_products.product_id')
+            .select('product_id', 'bonus', 'img', 'title', 'description', 'price', 'sold')
+    },
+
     async validateUpdate(product, user_id, res, db) {
         if (!product.id) {
             return res.status(400).json({

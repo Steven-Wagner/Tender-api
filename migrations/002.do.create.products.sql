@@ -6,9 +6,9 @@ CREATE TABLE products (
     title text not null unique,
     creator_id INTEGER REFERENCES users(id) not null,
     description text,
-    price NUMERIC(15,4),
+    price NUMERIC(15,2),
     sold INTEGER DEFAULT 0,
-    profit NUMERIC(20,4) DEFAULT 0,
+    profit NUMERIC(20,2) DEFAULT 0,
     ad adchoices default 'None',
     date_created TIMESTAMP DEFAULT now() NOT NULL
 );

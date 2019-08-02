@@ -69,6 +69,7 @@ const adService = {
                                 .update({
                                     last_ad_payment: 'now()'
                                 })
+                                // subtract cost of add from products profit total
                         })
                 }
                 else {

@@ -23,6 +23,23 @@ yourProductsRouter
     })
 
 yourProductsRouter
+    .route('/purchased/:user_id')
+    .all(requireAuth)
+    .get((req, res, next) => {
+        yourProductsService.getUsersPurchasedProducts(
+            req.app.get('db'),
+            req.params.user_id
+        )
+        .then(usersPurchasedProducts => {
+            res.status(200).json(
+                usersPurchasedProducts);
+        })
+        .catch(error => {
+            next(error);
+        })
+    })
+
+yourProductsRouter
     .route('/:user_id')
     .all(requireAuth)
     .get((req, res, next) => {

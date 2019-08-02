@@ -10,10 +10,10 @@ shopProductsRouter
     .all(requireAuth)
     .get((req, res, next) => {
         shopProductsService.getShoppingProducts(req.params.user_id, req.app.get('db'))
-        .then(shoppingProducts => {
-            res.status(200).json({
-                shoppingProducts
-            })
+        .then(shoppingItems => {
+            res.status(200).json(
+                shoppingItems
+            )
         })
         .catch(error => {
             next(error)

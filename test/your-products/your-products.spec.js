@@ -130,7 +130,7 @@ describe('Your Products Endpoints', function() {
             context('price tests', () => {
                 it('Responds 200 when user edits a products price', () => {
                     testProduct = Object.assign({}, testProducts[0]);
-                    testProduct.price = '100.0000';
+                    testProduct.price = '100.00';
 
                     const userId = testUser.id;
                             

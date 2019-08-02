@@ -100,16 +100,17 @@ const shopProductsService = {
             return this.payForProduct(newPurchase.buyer_id, product, db)
             .then(money => {
                 return this.addMoneyToSeller(product, db)
-                .then(money => {
-                    return this.addBonuses(product, newPurchase, db)
-                    .then(res => {
-                        return this.addProductToPurchasedProducts(newPurchase, db)
-                    })
-                })
+            .then(money => {
+                return this.addBonuses(product, newPurchase, db)
+            })
+            .then(res => {
+                return this.addProductToPurchasedProducts(newPurchase, db)
             })
         })
-
-        //add bonus to other user who have already bought item
+        .catch(error => {
+            return error;
+        })
+    })
 
     },
     addBonuses(product, newPurchase, db) {
