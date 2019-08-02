@@ -100,8 +100,12 @@ const shopProductsService = {
             return this.payForProduct(newPurchase.buyer_id, product, db)
             .then(money => {
                 return this.addMoneyToSeller(product, db)
+            })
             .then(money => {
                 return this.addBonuses(product, newPurchase, db)
+            })
+            .then(money => {
+                return this.addProfitAndSold(product, db)
             })
             .then(res => {
                 return this.addProductToPurchasedProducts(newPurchase, db)
@@ -110,8 +114,15 @@ const shopProductsService = {
         .catch(error => {
             return error;
         })
-    })
-
+    },
+    addProfitAndSold(product, db) {
+        return db
+            .from('products')
+            .where('id', product.id)
+            .increment({
+                profit: product.price,
+                sold: 1
+            })
     },
     addBonuses(product, newPurchase, db) {
         const bonusPercentage = .01;

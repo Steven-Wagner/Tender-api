@@ -266,6 +266,48 @@ describe('Buy Product Endpoint', function() {
                         })
                 })
             })
+            it('responds 200 and profit is added product', () => {
+                const userBuysProductId = testUsers[2].id;
+                const testProduct = testProducts[0];
+                const productId = testProduct.id;
+                const expectedProfit = parseFloat(testProduct.profit) + parseFloat(testProduct.price);
+                
+                return request(app)
+                .post(`/api/shopProducts/purchase/${userBuysProductId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUsers[2]))
+                .send({product_id: productId})
+                .then(res => {
+                    return db
+                        .from('products')
+                        .where('id', productId)
+                        .select('profit')
+                        .first()
+                        .then(profit => {
+                            expect(parseFloat(profit.profit)).to.eql(expectedProfit)
+                        })
+                })
+            })
+            it('responds 200 and 1 is added to product.sold', () => {
+                const userBuysProductId = testUsers[2].id;
+                const testProduct = testProducts[0];
+                const productId = testProduct.id;
+                const expectedSold = parseFloat(testProduct.sold) + 1;
+                
+                return request(app)
+                .post(`/api/shopProducts/purchase/${userBuysProductId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUsers[2]))
+                .send({product_id: productId})
+                .then(res => {
+                    return db
+                        .from('products')
+                        .where('id', productId)
+                        .select('sold')
+                        .first()
+                        .then(sold => {
+                            expect(parseFloat(sold.sold)).to.eql((parseFloat(expectedSold)))
+                        })
+                })
+            })
             it('responds 200 and bonus is added to money', () => {
                 const userBuysProductId = testUsers[2].id;
                 const userId = testPurchasedProducts[0].buyer_id;
