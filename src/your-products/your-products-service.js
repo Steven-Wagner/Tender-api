@@ -229,6 +229,9 @@ const yourProductsService = {
                     .update({
                         last_ad_payment: 'now()'
                     })
+                    .decrement({
+                        profit: adCosts[newProduct.ad]
+                    })
             })
     },
     async validateNewProduct(newProduct, res, db) {

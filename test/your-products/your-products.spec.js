@@ -268,6 +268,50 @@ describe('Your Products Endpoints', function() {
                             })
                     })
                 })
+                it('responds 200 and profit is subtracted from product for ad payment', () => {
+                    const testProduct = Object.assign({}, testProducts[0]);
+                    testProduct.ad = 'Annoying ads';
+
+                    const userId = testUser.id;
+                            
+                    return request(app)
+                    .patch(`/api/yourproducts/${userId}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUser))
+                    .send(testProduct)
+                    .expect(200)
+                    .then(res => {
+                        return db
+                            .from('products')
+                            .where('id', testProduct.id)
+                            .select('profit')
+                            .first()
+                            .then(profit => {
+                                expect(parseFloat(profit.profit)).to.eql(parseFloat(testProduct.profit - parseFloat(adCosts[testProduct.ad])))
+                            })
+                    })
+                })
+                it('responds 200 and profit is not subtracted for cheaper ad', () => {
+                    const testProduct = Object.assign({}, testProducts[0]);
+                    testProduct.ad = 'Homepage ads';
+
+                    const userId = testUser.id;
+                            
+                    return request(app)
+                    .patch(`/api/yourproducts/${userId}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUser))
+                    .send(testProduct)
+                    .expect(200)
+                    .then(res => {
+                        return db
+                            .from('products')
+                            .where('id', testProduct.id)
+                            .select('profit')
+                            .first()
+                            .then(profit => {
+                                expect(parseFloat(profit.profit)).to.eql(parseFloat(testProduct.profit))
+                            })
+                    })
+                })
             })
         })
         describe('Wrong Id', () => {

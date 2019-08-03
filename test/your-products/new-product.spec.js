@@ -189,6 +189,50 @@ describe('New Product Endpoint', function() {
                         })
                 })
             })
+            it('responds 200 and profit is subtracted from product for ad payment', () => {
+                const userId = testUser.id;
+                const product = Object.assign({}, newProduct);
+                product.profit = 0;
+                product.ad = 'Annoying ads';
+                        
+                return request(app)
+                .post(`/api/yourproducts/${userId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUser))
+                .send(product)
+                .expect(200)
+                .then(res => {
+                    return db
+                        .from('products')
+                        .where('id', res.body.id)
+                        .select('profit')
+                        .first()
+                        .then(profit => {
+                            expect(parseFloat(profit.profit)).to.eql(parseFloat(product.profit - parseFloat(adCosts[product.ad])))
+                        })
+                })
+            })
+            it('responds 200 and profit is not subtracted from product for ad: None', () => {
+                const userId = testUser.id;
+                const product = Object.assign({}, newProduct);
+                product.profit = 0;
+                product.ad = 'None';
+                        
+                return request(app)
+                .post(`/api/yourproducts/${userId}`)
+                .set('Authorization', helpers.makeAuthHeader(testUser))
+                .send(product)
+                .expect(200)
+                .then(res => {
+                    return db
+                        .from('products')
+                        .where('id', res.body.id)
+                        .select('profit')
+                        .first()
+                        .then(profit => {
+                            expect(parseFloat(profit.profit)).to.eql(parseFloat(product.profit))
+                        })
+                })
+            })
         })
     })
 })
