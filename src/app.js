@@ -10,6 +10,7 @@ const yourProductsRouter =  require('./your-products/your-products-router');
 const shopProductsRouter = require('./shop-product/shop-product');
 const userInfoRouter = require('./user-info/user-info');
 const adsRouter = require('./ads/ads');
+const adCostsRouter = require('./ad-costs/adCosts');
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use('/api/shopProducts/', shopProductsRouter);
 app.use('/api/userInfo/', userInfoRouter);
 
 app.use('/api/ads/', adsRouter);
+
+app.use('/api/adCosts/', adCostsRouter);
 
 app.use(function errorHandler(error, req, res, next) {
     if (NODE_ENV === 'production') {

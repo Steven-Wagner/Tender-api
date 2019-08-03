@@ -140,3 +140,31 @@ describe('ads Endpoints', function() {
         })
     })
 })
+describe('adCosts endpointd', () => {
+    before('make knex instance', () => {
+        db = knex({
+            client: 'pg',
+            connection: process.env.TEST_DB_URL
+        })
+        app.set('db', db)
+        return db
+    });
+
+    after('disconnect from db', () => db.destroy());
+
+    before('cleanup', async function () { await helpers.cleanTables(db)});
+
+    afterEach('cleanup', async function () {return await helpers.cleanTables(db)});
+
+    describe('GET /api/adCosts/', () => {
+        it('Responds 200 with adCost object', () => {
+            return request(app)
+            .get(`/api/adCosts/`)
+            .expect(200)
+            .then(res => {
+                expect(res.body).to.contain.keys('Homepage ads', 'Popup ads', 'Annoying ads');
+                expect(parseFloat(res.body['Homepage ads'])).to.be.a('number')
+            })
+        })
+    })
+})
