@@ -19,10 +19,10 @@ adsRouter
         else {
             adService.getAds(user_id, adType, req.app.get('db'))
             .then(newAd => {
-                newAd = newAd[0]
-                res.status(200).json({
+                newAd = newAd[0] ? newAd[0] : {};
+                res.status(200).json(
                     newAd
-                })
+                )
             })
             .catch(error => {
                 next(error)

@@ -2,7 +2,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe('ads Endpoints', function() {
+describe.only('ads Endpoints', function() {
     let db
 
     const testUsers = helpers.makeUsersArray();
@@ -57,7 +57,7 @@ describe('ads Endpoints', function() {
                     .set('Authorization', helpers.makeAuthHeader(testUser))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.newAd.ad).to.eql(`${adType}`);
+                        expect(res.body.ad).to.eql(`${adType}`);
                     })
                 })
             })
@@ -71,7 +71,7 @@ describe('ads Endpoints', function() {
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .expect(200)
                 .then(res => {
-                    expect(res.body.newAd).to.eql(undefined);
+                    expect(res.body).to.eql({});
                 })
             })
             it('responds 200 and products created by user are not included', () => {
@@ -84,7 +84,7 @@ describe('ads Endpoints', function() {
                 .set('Authorization', helpers.makeAuthHeader(testUser))
                 .expect(200)
                 .then(res => {
-                    expect(res.body.newAd).to.eql(undefined);
+                    expect(res.body).to.eql({});
                 })
             })
             describe('validate parrams', () => {
@@ -125,7 +125,7 @@ describe('ads Endpoints', function() {
 
             const adTypes = ['Homepage ads', 'Popup ads', 'Annoying ads']
             adTypes.forEach(adType => {
-                it(`Responds 200 and recives an undefined newAd`, () => {
+                it.only(`Responds 200 and recives an undefined newAd`, () => {
                     const userId = testUser.id;
 
                     return request(app)
@@ -133,7 +133,7 @@ describe('ads Endpoints', function() {
                     .set('Authorization', helpers.makeAuthHeader(testUser))
                     .expect(200)
                     .then(res => {
-                        expect(res.body.newAd).to.eql(undefined);
+                        expect(res.body).to.eql({});
                     })
                 })
             })
