@@ -2,7 +2,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe.only('ads Endpoints', function() {
+describe('ads Endpoints', function() {
     let db
 
     const testUsers = helpers.makeUsersArray();
@@ -125,7 +125,7 @@ describe.only('ads Endpoints', function() {
 
             const adTypes = ['Homepage ads', 'Popup ads', 'Annoying ads']
             adTypes.forEach(adType => {
-                it.only(`Responds 200 and recives an undefined newAd`, () => {
+                it(`Responds 200 and recives an undefined newAd`, () => {
                     const userId = testUser.id;
 
                     return request(app)
