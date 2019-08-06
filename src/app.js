@@ -11,6 +11,7 @@ const shopProductsRouter = require('./shop-product/shop-product');
 const userInfoRouter = require('./user-info/user-info');
 const adsRouter = require('./ads/ads');
 const adCostsRouter = require('./ad-costs/adCosts');
+const {CLIENT_ORIGIN} = require('./config');
 
 const app = express();
 
@@ -19,7 +20,10 @@ const morganSetting = (NODE_ENV === 'production')
     : 'dev';
 
 app.use(morgan(morganSetting));
-app.use(cors());
+app.use(cors({
+    origin: CLIENT_ORIGIN
+}));
+
 app.use(helmet());
 
 app.use('/api/auth/', authRouter);
