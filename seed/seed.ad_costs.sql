@@ -1,6 +1,6 @@
 INSERT INTO ad_costs (ad, cost)
 VALUES
-  ('Homepage ads', 10),
-  ('Popup ads', 15),
+  ('Homepage ads', 2),
+  ('Popup ads', 4),
   ('None', 0),
-  ('Annoying ads', 20);
+  ('Annoying ads', 6);
