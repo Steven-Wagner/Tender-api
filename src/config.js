@@ -1,4 +1,5 @@
 module.exports = {
+    CLIENT_ORIGIN: process.env.client_origin || "http://localhost:3000",
     PORT: process.env.PORT || 8000,
     DB_URL: process.env.DATABASE_URL || "postgresql://dev:wabaxrmz42@localhost/tender-test",
     TEST_DB_URL: process.env.DATABASE_URL || "postgresql://dev:wabaxrmz42@localhost/tender-test",

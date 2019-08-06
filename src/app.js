@@ -20,6 +20,7 @@ const morganSetting = (NODE_ENV === 'production')
     : 'dev';
 
 app.use(morgan(morganSetting));
+
 app.use(cors({
     origin: CLIENT_ORIGIN
 }));
