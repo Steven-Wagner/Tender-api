@@ -19,6 +19,7 @@ const shopProductsService = {
                 .whereNotIn('id', productsAlreadyPurchased)
                 .andWhereNot('creator_id', user_id)
                 .select('*')
+                .orderBy('date_created', 'desc')
             })
     },
     async validatePurchase(newPurchase, res, db) {

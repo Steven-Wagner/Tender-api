@@ -15,8 +15,6 @@ const {CLIENT_ORIGIN} = require('./config');
 
 const app = express();
 
-console.log('client origin', CLIENT_ORIGIN);
-
 const morganSetting = (NODE_ENV === 'production')
     ? 'tiny'
     : 'dev';

@@ -17,6 +17,7 @@ const yourProductsService = {
                 'creator_id',
                 'date_created'
             )
+            .orderBy('date_created', 'desc')
     },
     getProductById(db, id) {
         return db
@@ -42,7 +43,8 @@ const yourProductsService = {
             .from('purchased_products')
             .where('buyer_id', user_id)
             .innerJoin('products', 'products.id', 'purchased_products.product_id')
-            .select('product_id', 'bonus', 'img', 'title', 'description', 'price', 'sold')
+            .select('product_id', 'bonus', 'img', 'title', 'description', 'price', 'sold', 'purchased_products.date_created')
+            .orderBy('purchased_products.date_created', 'desc')
     },
 
     async validateUpdate(product, user_id, res, db) {
