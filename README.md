@@ -2,7 +2,8 @@
 
 Live page: https://stevenwagner-tender-app.now.sh/
 
-Description:
+## Description
+
 Have you ever had a great idea for a product and wanted to share it with the world? Maybe it's something that you could never actaualy build but you just want people to marvel at your creativity.
 
 Tender lets you pitch ideas for new products and allows others to decide if your product will be popular or a dud. Each item has a title, an image, a short description, and a price. Users even have the choice to pay for ads to increase their sales. The number of products sold, the profit made, and the price are all tracked so that users can easily see which of their items are successful over time.
