@@ -9,6 +9,7 @@ shopProductsRouter
     .route('/:user_id')
     .all(requireAuth)
     .get((req, res, next) => {
+        //Returns a list of all eligable shopping items
         shopProductsService.getShoppingProducts(req.params.user_id, req.app.get('db'))
         .then(shoppingItems => {
             res.status(200).json(
@@ -24,6 +25,7 @@ shopProductsRouter
     .route('/purchase/:user_id')
     .all(requireAuth)
     .post(jsonBodyParser, (req, res, next) => {
+        //Accepts {product_id: id} in body to purchase a product by id
         const {product_id} = req.body;
         const newPurchase = {product_id};
         newPurchase.buyer_id = req.params.user_id
@@ -51,6 +53,7 @@ shopProductsRouter
     .route('/popular/:user_id')
     .all(requireAuth)
     .get((req, res, next) => {
+        //Returns the users 3 most popular items
         shopProductsService.getPopularProducts(
             req.app.get('db'),
             req.params.user_id

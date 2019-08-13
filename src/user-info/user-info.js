@@ -8,6 +8,7 @@ userInfoRouter
     .route('/:user_id')
     .all(requireAuth)
     .get((req, res, next) => {
+        //Returns the current users information, 'username', 'money', 'description'
         const user_id = req.params.user_id;
                 userInfoService.getUserInfo(user_id, req.app.get('db'))
                 .then(userInfo => 

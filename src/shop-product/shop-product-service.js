@@ -25,6 +25,7 @@ const shopProductsService = {
     async validatePurchase(newPurchase, res, db) {
         return await this.getProductById(newPurchase.product_id, db)
         .then( async function (product) {
+            //Product exists
             if (!product) {
                 return res.status(400).json({
                     message: 'product_id invalid'
@@ -130,10 +131,12 @@ const shopProductsService = {
         const newBonus = parseFloat(product.price*bonusPercentage)
 
         return db
+            //Add bonus to purchasd_products bonus column
             .from('purchased_products')
             .where('product_id', newPurchase.product_id)
             .increment('bonus', newBonus)
             .then(res => {
+                //Add bonus to money of all users who recived a bonus
                 return db
                 .from('users')
                 .whereIn('id', function() {

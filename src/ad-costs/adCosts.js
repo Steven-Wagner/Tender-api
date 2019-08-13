@@ -7,6 +7,7 @@ const adCostsRouter = express.Router();
 adCostsRouter
     .route('')
     .get((req, res, next) => {
+        //Returns per day cost of all ads
         adService.getSimpleAdCosts(req.app.get('db'))
         .then(adCosts => {
             res.status(200).json(

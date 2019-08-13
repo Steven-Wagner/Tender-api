@@ -10,6 +10,7 @@ const db = knex({
 
 app.set('db', db)
 
+//Periodic check to charge for ads every 24 hours
 const payAdsInterval = setInterval(function () {
     adService.checkAdPayments(db)
 }, 3600000)
