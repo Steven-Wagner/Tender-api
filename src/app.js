@@ -43,10 +43,9 @@ app.use('/api/adCosts/', adCostsRouter);
 
 app.use(function errorHandler(error, req, res, next) {
     if (NODE_ENV === 'production') {
-        repsonse = {error: {message: 'server error'}}
+        response = {error: {message: 'server error'}}
     }
     else {
-        console.log(error);
         response = {error}
     }
     res.status(500).json(reponse)
