@@ -1,26 +1,32 @@
-# Express Boilerplate!
+# Tender: The Non-Commital Shopping App API
 
-This is a boilerplate project used for starting new projects!
+Live page: https://stevenwagner-tender-app.now.sh/
 
-## Set up
+Description:
+Have you ever had a great idea for a product and wanted to share it with the world? Maybe it's something that you could never actaualy build but you just want people to marvel at your creativity.
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+Tender lets you pitch ideas for new products and allows others to decide if your product will be popular or a dud. Each item has a title, an image, a short description, and a price. Users even have the choice to pay for ads to increase their sales. The number of products sold, the profit made, and the price are all tracked so that users can easily see which of their items are successful over time.
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+Other users are incentivize to buy products that they think will be popular because they receive a small bonus every time an item they purchased is bought by another user.
 
-## Scripts
+Create a product; sell it; and buy other user created products. And see how much Play Money you can make.
 
-Start the application `npm start`
+## API Documentation:
 
-Start nodemon for the application `npm run dev`
+All endpoints and descriptions are located here:
+https://documenter.getpostman.com/view/7571959/S1M3u5G4?version=latest
 
-Run the tests `npm test`
+### Technologies:
 
-## Deploying
+* HTML
+* CSS
+* Javascript
+* Node.js 
+* Express 
+* React 
+* PostgreSQL
+* chia, mocha, Jest, and Enzyme for testing
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+## Recourses:
+
+* Hosted on Now(Zeit) and Heroku
