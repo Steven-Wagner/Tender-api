@@ -471,7 +471,7 @@ describe('Your Products Endpoints', function() {
             );
         });
         context('happy path', () => {
-            it.only('Responds with a list of number of sales per day for the past 7 days', () => {
+            it('Responds with a list of number of sales per day for the past 7 days', () => {
                 const testUser = testUsers[0];
                 const userId = testUser.id;
 
