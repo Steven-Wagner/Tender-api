@@ -312,6 +312,32 @@ const yourProductsService = {
             .orderBy('sold', 'desc')
             .select('title', 'creator_id', 'description', 'price', 'profit', 'ad', 'date_created', 'id', 'img', 'sold')
             .limit(3)
+    },
+
+    getPastSalesData(productId, db) {
+
+        return db
+            .raw(
+                `SELECT d.date, count(pp.id) FROM (select to_char(date_trunc('day', (current_date - offs)), 'YYYY-MM-DD') AS date FROM generate_series(0, 6, 1) AS offs) d left outer JOIN purchased_products pp
+                ON (d.date=to_char(date_trunc('day', pp.date_created), 'YYYY-MM-DD') and pp.product_id=${productId})  
+                GROUP BY d.date;`
+            )
+
+        // const dates = db
+        //     .select(db.raw('to_char(date_trunc(\'day\', (current_date - offs)), \'YYYY-MM-DD\') as "date"'))
+        //     .from(db.raw('generate_series(0, 6, 1) as "offs'));
+
+        // return db
+        // .select('d.date')
+        // .count('purchased_products.id')
+        // .from(dates)
+        // .as('d')
+        // .leftOuterJoin('purchased_products', function() {
+        //     return db
+        //     .on('d.date', db.raw('to_char(date_trunc(day, pp.date_created), YYYY-MM-DD)'))
+        //     .on('purchased_products', productId)
+        // })
+        // .groupBy('d.date')
     }
 
 }

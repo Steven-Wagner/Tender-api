@@ -52,6 +52,10 @@ function makePurchasedProductsArray() {
         product_id: 1,
         buyer_id: 2
         },
+        {
+        product_id: 1,
+        buyer_id: 3
+        },
     ]
 }
 

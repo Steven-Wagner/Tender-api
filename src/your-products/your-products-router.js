@@ -102,4 +102,22 @@ yourProductsRouter
         })
     })
 
+yourProductsRouter
+    .route('/:user_id/:product_id')
+    .all(requireAuth)
+    .get((req, res, next) => {
+        const productId = req.params.product_id;
+        const db = req.app.get('db');
+
+        yourProductsService.getPastSalesData(productId, db)
+        .then(data => {
+            res.status(200).json(
+                data.rows
+            )
+        })
+        .catch(error => {
+            next(error);
+        })
+    })
+
     module.exports = yourProductsRouter;

@@ -9,6 +9,7 @@ describe('Your Products Endpoints', function() {
 
     const testUsers = helpers.makeUsersArray();
     const testUser = testUsers[0];
+    const purchasedProducts = helpers.makePurchasedProductsArray();
 
     const testProducts = helpers.makeProductsArray();
 
@@ -447,6 +448,41 @@ describe('Your Products Endpoints', function() {
                         })
                     })
                 })
+            })
+        })
+    })
+    describe('/api/yourproducts/:user_id/:product_id', () => {
+        beforeEach('insert users', async function () {
+            return await helpers.seedUsers(
+                db,
+                testUsers
+            );
+        });
+        beforeEach('insert products', async function () {
+            return await helpers.seedProducts(
+                db,
+                testProducts
+            );
+        });
+        beforeEach('insert purchased products', async function () {
+            return await helpers.seedPurchasedProducts(
+                db,
+                purchasedProducts
+            );
+        });
+        context('happy path', () => {
+            it.only('Responds with a list of number of sales per day for the past 7 days', () => {
+                const testUser = testUsers[0];
+                const userId = testUser.id;
+
+                const productId = testProducts[0].id;
+
+                return request(app)
+                    .get(`/api/yourproducts/${userId}/${productId}`)
+                    .set('Authorization', helpers.makeAuthHeader(testUser))
+                    .then(res => {
+                        expect(res.body).to.have.length(7);
+                    })
             })
         })
     })
